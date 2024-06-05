@@ -21,7 +21,7 @@ The RLM (Reprise License Manager) can be used to provide, with public or private
 bash create_end_user_script.sh
 ```
 
-3. Then copy the script rlm_server_install.sh to the Linux server and executer:
+3. Then copy the script rlm_server_install.sh to the Linux server and execute:
 ```bash
 bash rlm_server_install.sh
 ```
