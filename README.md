@@ -14,9 +14,11 @@ bash rlm_server_install.sh
 
 You can also check last releases here: https://github.com/NISP-GmbH/RLM_for_Linux/releases
 
-## Customizing the script
+### Customizing the script
 
-### File structure
+This step is only needed if you want to create your own installer.
+
+#### File structure
 
 - head.txt : A script header
 - library.sh : All bash functions implemented
@@ -25,7 +27,7 @@ You can also check last releases here: https://github.com/NISP-GmbH/RLM_for_Linu
 - tail.txt : A script tail
 - create_end_user_script.sh : Will create the script to setup RLM for Linux. By default will be rlm_server_install.sh
 
-### Customizing
+#### Customizing
 
 You can edit any file that you want, and then execute:
 ```bash
