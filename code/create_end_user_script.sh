@@ -2,7 +2,7 @@
 
 # create the end user script
 
-end_user_script_name="rlm_server_install.sh"
+end_user_script_name="../rlm_server_install.sh"
 
 if [ -f $end_user_script_name ]
 then
