@@ -10,7 +10,7 @@ welcomeInstructions()
 	echo "Before proceed, you need to prepare the environment. Please check if:"
 	echo "- Copy your license file to >>> $license_file <<<."
 	echo "- Configure your >>> $dcv_config_file <<< config file to have >>> $dcv_license_file_regex <<< unique line."
-	echo "- Check if the server hostname is a FQDN. The command >>> hostname --ip-address <<< must return a valid ipv4."
+	echo "- Check if the server hostname is resolvable to an IP address. The command >>> hostname --ip-address <<< must return a valid ipv4."
 	echo "If your environment meets all requirements, please press enter. Or ctrl+c if not."
 	read p
 }
@@ -35,7 +35,7 @@ checkIfLicenseFileIsConfigured()
 	fi
 }
 
-checkIfHostnameIsFqdn()
+checkIfHostnameIsResolvable()
 {
 	sudo host $server_hostname 2>&1 > /dev/null
 	if [ $? -eq 0 ]

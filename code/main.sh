@@ -5,12 +5,12 @@ main()
 	then
 		if checkIfLicenseFileIsConfigured
 		then
-			if checkIfHostnameIsFqdn
+			if checkIfHostnameIsResolvable
 			then
 				setupRlmServer
 				finishedSetup
 			else
-				echo "The hostname >>> $server_hostname <<< is not FQDN. Please fix your >>> /etc/hostname <<< file and, if is necessary, add it to /etc/hosts to be resolved locally. Aborting..."
+				echo "The hostname >>> $server_hostname <<< is not resolvable to an IP address. Please fix your >>> /etc/hostname <<< file and, if is necessary, add it to /etc/hosts to be resolved locally. Aborting..."
 				exit 3
 			fi
 		else
