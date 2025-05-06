@@ -80,7 +80,7 @@ setupRlmServer()
 	wget --no-check-certificate ${rlm_url}
 	if [[ "$?" != "0" ]]
 	then
-		echo "Problem downloading >>> ${rlm_url} <<<. Aborting..."
+		echo "Problem downloading >>> ${rlm_url} <<<. Exitting..."
 		exit 2
 	fi
 
