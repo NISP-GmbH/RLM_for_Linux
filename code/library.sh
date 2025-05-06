@@ -1,6 +1,7 @@
 finishedSetup()
 {
-	echo "The setup was finished. Please check the systemctl RLM daemon status with >>> systemctl status rlm <<< command."
+	echo "The setup was finished!"
+	echo "Please check the systemctl RLM daemon status with >>> systemctl status rlm <<< command."
 }
 
 checkCurrentHostname()
