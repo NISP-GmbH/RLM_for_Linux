@@ -54,7 +54,7 @@ checkIfLicenseFileIsConfigured()
 
 checkIfHostnameIsResolvable()
 {
-	sudo host $server_hostname 2>&1 > /dev/null
+	sudo getent ahostsv4 $server_hostname 2>&1 > /dev/null
 	if [ $? -eq 0 ]
     then
 		true
