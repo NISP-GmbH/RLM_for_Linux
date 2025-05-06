@@ -89,7 +89,7 @@ setupRlmServer()
 	sudo cp $license_file /opt/nice/rlm/license/
 	sudo cp /usr/share/dcv/license/nice.set /opt/nice/rlm/
 
-	sudo cat <<EOF> /usr/lib/systemd/system/rlm.service
+	cat <<EOF | sudo tee /usr/lib/systemd/system/rlm.service
 [Unit]
 Description=Reprise License Manager Server
 After=network.target
