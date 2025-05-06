@@ -16,7 +16,22 @@
 
 finishedSetup()
 {
-	echo "The setup was finished. Please check the systemctl RLM daemon status with >>> systemctl status rlm <<< command."
+	echo "The setup was finished!"
+	echo "Please check the systemctl RLM daemon status with >>> systemctl status rlm <<< command."
+}
+
+checkCurrentHostname()
+{
+	echo "Your current hostname resolution of >>> $HOSTNAME <<< hostname is:"
+	hostname --ip-address
+
+	if hostname --ip-address | egrep -iq "(\:\:1|127.0.*)"
+	then
+		echo ""
+		echo ""
+		echo "Important: It seems that your hostname is resolving to localhost IPs. Your need to configure the hostname to return just one valid ipv4 address!"
+		echo "Proceed just if you know what you are doing!"
+	fi
 }
 
 welcomeInstructions()
@@ -26,7 +41,10 @@ welcomeInstructions()
 	echo "Before proceed, you need to prepare the environment. Please check if:"
 	echo "- Copy your license file to >>> $license_file <<<."
 	echo "- Configure your >>> $dcv_config_file <<< config file to have >>> $dcv_license_file_regex <<< unique line."
-	echo "- Check if the server hostname is a FQDN. The command >>> hostname --ip-address <<< must return a valid ipv4."
+	echo "- Check if the server hostname is resolvable to an IP address. The command >>> hostname --ip-address <<< must return a valid ipv4."
+	echo ""
+	checkCurrentHostname
+	echo ""
 	echo "If your environment meets all requirements, please press enter. Or ctrl+c if not."
 	read p
 }
@@ -51,9 +69,9 @@ checkIfLicenseFileIsConfigured()
 	fi
 }
 
-checkIfHostnameIsFqdn()
+checkIfHostnameIsResolvable()
 {
-	sudo host $server_hostname 2>&1 > /dev/null
+	sudo getent ahostsv4 $server_hostname 2>&1 > /dev/null
 	if [ $? -eq 0 ]
     then
 		true
@@ -79,16 +97,23 @@ setupRlmServer()
 	wget --no-check-certificate ${rlm_url}
 	if [[ "$?" != "0" ]]
 	then
-		echo "Problem downloading >>> ${rlm_url} <<<. Aborting..."
+		echo "Problem downloading >>> ${rlm_url} <<<. Exitting..."
 		exit 2
 	fi
 
 	sudo tar xf $rlm_filename -C /opt/nice/rlm/ --strip-components 1
+
+    if [[ "$?" != "0" ]]
+    then
+        echo "Failed to extract the RLM files... The script can not proceed. Exitting..."
+        exit 4
+    fi
+
 	sudo chown -R rlm:rlm /opt/nice/rlm
 	sudo cp $license_file /opt/nice/rlm/license/
 	sudo cp /usr/share/dcv/license/nice.set /opt/nice/rlm/
 
-	sudo cat <<EOF> /usr/lib/systemd/system/rlm.service
+	cat <<EOF | sudo tee /usr/lib/systemd/system/rlm.service
 [Unit]
 Description=Reprise License Manager Server
 After=network.target
@@ -126,20 +151,20 @@ main()
 	then
 		if checkIfLicenseFileIsConfigured
 		then
-			if checkIfHostnameIsFqdn
+			if checkIfHostnameIsResolvable
 			then
 				setupRlmServer
 				finishedSetup
 			else
-				echo "The hostname >>> $server_hostname <<< is not FQDN. Please fix your >>> /etc/hostname <<< file and, if is necessary, add it to /etc/hosts to be resolved locally. Aborting..."
+				echo "The hostname >>> $server_hostname <<< is not resolvable to an IP address. Please fix your >>> /etc/hostname <<< file and, if is necessary, add it to /etc/hosts to be resolved locally. Exitting..."
 				exit 3
 			fi
 		else
-			echo "The DCV License config under file >>> $dcv_config_file <<< with the pattern >>> $dcv_license_file_regex <<< was not found. Please configure your >>> $dcv_config_file <<< config file with >>> $dcv_license_file_regex <<<. Aborting..."
+			echo "The DCV License config under file >>> $dcv_config_file <<< with the pattern >>> $dcv_license_file_regex <<< was not found. Please configure your >>> $dcv_config_file <<< config file with >>> $dcv_license_file_regex <<< under [license] section. Exitting..."
 			exit 2
 		fi
 	else
-		echo "The License file >>> $license_file <<< does not exist. Please copy your license file to >>> $license_file  <<<. Aborting..."
+		echo "The License file >>> $license_file <<< does not exist. Please copy your license file to >>> $license_file  <<<. Exitting..."
 		exit 1
 	fi
 	
