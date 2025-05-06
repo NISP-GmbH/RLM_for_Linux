@@ -3,6 +3,20 @@ finishedSetup()
 	echo "The setup was finished. Please check the systemctl RLM daemon status with >>> systemctl status rlm <<< command."
 }
 
+checkCurrentHostname()
+{
+	echo "Your current hostname resolution of >>> $HOSTNAME <<< hostname is:"
+	hostname --ip-address
+
+	if hostname --ip-address | egrep -iq "(\:\:1|127.0.*)"
+	then
+		echo ""
+		echo ""
+		echo "Important: It seems that your hostname is resolving to localhost IPs. Your need to configure the hostname to return just one valid ipv4 address!"
+		echo "Proceed just if you know what you are doing!"
+	fi
+}
+
 welcomeInstructions()
 {
 	clear
@@ -11,6 +25,9 @@ welcomeInstructions()
 	echo "- Copy your license file to >>> $license_file <<<."
 	echo "- Configure your >>> $dcv_config_file <<< config file to have >>> $dcv_license_file_regex <<< unique line."
 	echo "- Check if the server hostname is resolvable to an IP address. The command >>> hostname --ip-address <<< must return a valid ipv4."
+	echo ""
+	checkCurrentHostname
+	echo ""
 	echo "If your environment meets all requirements, please press enter. Or ctrl+c if not."
 	read p
 }
