@@ -85,6 +85,13 @@ setupRlmServer()
 	fi
 
 	sudo tar xf $rlm_filename -C /opt/nice/rlm/ --strip-components 1
+
+    if [[ "$?" != "0" ]]
+    then
+        echo "Failed to extract the RLM files... The script can not proceed. Exitting..."
+        exit 4
+    fi
+
 	sudo chown -R rlm:rlm /opt/nice/rlm
 	sudo cp $license_file /opt/nice/rlm/license/
 	sudo cp /usr/share/dcv/license/nice.set /opt/nice/rlm/
