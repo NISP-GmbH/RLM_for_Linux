@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e -o pipefail -u
 ################################################################################
 # Copyright (C) 2019-2024 NI SP GmbH
 # All Rights Reserved
@@ -94,20 +95,24 @@ setupRlmServer()
 
 	sudo mkdir -p /opt/nice/rlm/license
 
-	wget --no-check-certificate ${rlm_url}
-	if [[ "$?" != "0" ]]
-	then
-		echo "Problem downloading >>> ${rlm_url} <<<. Exitting..."
-		exit 2
+	if [ -f /opt/nice/rlm/rlm ]; then
+		echo "RLM server binary already found at /opt/nice/rlm/rlm. Skipping download and extraction."
+	else
+		wget --no-check-certificate ${rlm_url}
+		if [[ "$?" != "0" ]]
+		then
+			echo "Problem downloading >>> ${rlm_url} <<<. Exitting..."
+			exit 2
+		fi
+
+		sudo tar xf $rlm_filename -C /opt/nice/rlm/ --strip-components 1
+
+		if [[ "$?" != "0" ]]
+		then
+			echo "Failed to extract the RLM files... The script can not proceed. Exitting..."
+			exit 4
+		fi
 	fi
-
-	sudo tar xf $rlm_filename -C /opt/nice/rlm/ --strip-components 1
-
-    if [[ "$?" != "0" ]]
-    then
-        echo "Failed to extract the RLM files... The script can not proceed. Exitting..."
-        exit 4
-    fi
 
 	sudo chown -R rlm:rlm /opt/nice/rlm
 	sudo cp $license_file /opt/nice/rlm/license/
@@ -131,7 +136,25 @@ WantedBy=multi-user.target
 EOF
 
 	sudo systemctl daemon-reload
-	sudo systemctl enable --now rlm.service
+	if sudo systemctl is-active --quiet rlm.service; then
+		echo "RLM service is already active. Restarting it to apply any changes..."
+		sudo systemctl restart rlm.service
+		if [[ "$?" != "0" ]]; then
+			echo "Failed to restart RLM service. Please check status with 'systemctl status rlm'."
+		else
+			echo "RLM service restarted."
+		fi
+		# Ensure it's enabled even if it was already active
+		if ! sudo systemctl is-enabled --quiet rlm.service; then
+			sudo systemctl enable rlm.service
+		fi
+	else
+		echo "RLM service is not active. Enabling and starting RLM service..."
+		sudo systemctl enable --now rlm.service
+		if [[ "$?" != "0" ]]; then
+			echo "Failed to enable and start RLM service. Please check status with 'systemctl status rlm'."
+		fi
+	fi
 }
 
 # global vars

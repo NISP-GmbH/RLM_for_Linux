@@ -18,6 +18,7 @@ You can also check last releases here: https://github.com/NISP-GmbH/RLM_for_Linu
 
 This step is only needed if you want to create your own installer.
 
+The source files are located in the `code/` directory:
 #### File structure
 
 - head.txt : A script header
@@ -29,8 +30,8 @@ This step is only needed if you want to create your own installer.
 
 #### Customizing
 
-You can edit any file that you want, and then execute:
+You can edit any of the source files (located in the `code/` directory). To regenerate the main installer script, navigate into the `code/` directory and run:
 ```bash
-bash create_end_user_script.sh
+./create_end_user_script.sh
 ```
-It will create the rlm_server_install.sh installer.
+It will create the rlm_server_install.sh installer in the parent directory.
