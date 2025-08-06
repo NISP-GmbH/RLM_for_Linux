@@ -113,25 +113,7 @@ setupRlmServer()
 	sudo cp $license_file /opt/nice/rlm/license/
 	sudo cp /usr/share/dcv/license/nice.set /opt/nice/rlm/
 
-	cat <<EOF | sudo tee /usr/lib/systemd/system/rlm.service
-[Unit]
-Description=Reprise License Manager Server
-After=network.target
-
-[Service]
-Type=simple
-WorkingDirctory=/opt/nice/rlm/
-ExecStart=/opt/nice/rlm/rlm -c /opt/nice/rlm/license -nows -dlog +/var/log/rlm.log
-ExecStop=/opt/nice/rlm/rlmutil rlmdown RLM -c /opt/nice/rlm/license -q
-User=$rlm_user
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-	sudo systemctl daemon-reload
-	sudo systemctl enable --now rlm.service
+	sudo ./systemd-installer.sh "code/rlm.service"
 }
 
 # global vars

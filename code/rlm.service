@@ -1,0 +1,14 @@
+[Unit]
+Description=Reprise License Manager Server
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/nice/rlm/
+ExecStart=/opt/nice/rlm/rlm -c /opt/nice/rlm/license -nows -dlog +/var/log/rlm.log
+ExecStop=/opt/nice/rlm/rlmutil rlmdown RLM -c /opt/nice/rlm/license -q
+User=rlm
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
