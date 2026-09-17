@@ -27,7 +27,7 @@ checkIfLicenseFileExist()
 
 checkIfLicenseFileIsConfigured()
 {
-	if sudo cat $dcv_config_file | egrep -i "^license-file" | tr -d '[:space:]' | egrep -iq $dcv_license_file_regex
+	if sudo cat $dcv_config_file | grep -Ei "^license-file" | tr -d '[:space:]' | grep -Eiq $dcv_license_file_regex
 	then
 		true
 	else
