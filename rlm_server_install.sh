@@ -25,7 +25,7 @@ checkCurrentHostname()
 	echo "Your current hostname resolution of >>> $HOSTNAME <<< hostname is:"
 	hostname --ip-address
 
-	if hostname --ip-address | egrep -iq "(\:\:1|127.0.*)"
+	if hostname --ip-address | grep -Eiq "(\:\:1|127.0.*)"
 	then
 		echo ""
 		echo ""
@@ -61,7 +61,7 @@ checkIfLicenseFileExist()
 
 checkIfLicenseFileIsConfigured()
 {
-	if sudo cat $dcv_config_file | egrep -i "^license-file" | tr -d '[:space:]' | egrep -iq $dcv_license_file_regex
+	if sudo cat $dcv_config_file | grep -Ei "^license-file" | tr -d '[:space:]' | grep -Eiq $dcv_license_file_regex
 	then
 		true
 	else

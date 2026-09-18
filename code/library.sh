@@ -9,7 +9,7 @@ checkCurrentHostname()
 	echo "Your current hostname resolution of >>> $HOSTNAME <<< hostname is:"
 	hostname --ip-address
 
-	if hostname --ip-address | egrep -iq "(\:\:1|127.0.*)"
+	if hostname --ip-address | grep -Eiq "(\:\:1|127.0.*)"
 	then
 		echo ""
 		echo ""
